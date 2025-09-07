@@ -78,3 +78,16 @@ form textarea { min-height:120px; resize:vertical; }
   color: var(--accent);
   cursor: pointer;
 }
+/* --- Cart/backdrop layering fix --- */
+#cartBackdrop { 
+  z-index: 10000;           /* backdrop above the whole page */
+}
+
+.cart-panel { 
+  z-index: 10001;           /* cart panel above the backdrop */
+}
+
+/* Make sure the header sits UNDER the backdrop so it also dims */
+header {
+  z-index: 1 !important;    /* override any previous z-index on header */
+}
