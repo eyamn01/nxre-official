@@ -64,3 +64,17 @@ form textarea { min-height:120px; resize:vertical; }
 @media (max-width: 520px) {
   .grid { grid-template-columns: 1fr; }
 }
+/* Make the cart header close button larger/clearer */
+.cart-header .icon-btn {
+  font-size: 18px;
+  line-height: 1;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+}
+.cart-header .icon-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  cursor: pointer;
+}
