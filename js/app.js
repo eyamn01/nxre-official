@@ -1,8 +1,5 @@
+// === NXRE Official — Storefront App (Full Rewrite with Backdrop Fix) ===
 
-// === NXRE Official — Storefront App (Full Rewrite) ===
-// Drop-in replacement for js/app.js
-
-// ---------- Helpers ----------
 const $  = (sel) => document.querySelector(sel);
 const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 const fmt = (cents) =>
@@ -55,7 +52,7 @@ function renderCart() {
       <div style="flex:1;">
         <div style="display:flex; justify-content:space-between;">
           <strong>${item.title}</strong>
-          <button class="icon-btn" data-remove="${idx}" aria-label="Remove ${item.title}">✕</button>
+          <button type="button" class="icon-btn" data-remove="${idx}" aria-label="Remove ${item.title}">✕</button>
         </div>
         <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
           <span class="price">${fmt(item.price)}</span>
@@ -74,7 +71,7 @@ function updateCartBadge() {
   $('#openCart')?.setAttribute('data-badge', count);
 }
 
-// ---------- Modal (Product Quick View) ----------
+// ---------- Modal ----------
 function openModal(product) {
   state.selected = product;
   $('#modalImg').src = product.image;
@@ -124,7 +121,7 @@ function subtotal() {
   return state.cart.reduce((a, c) => a + c.price * c.qty, 0);
 }
 
-// ---------- Cart UI (Improved open/close + back/esc/outside tap) ----------
+// ---------- Backdrop + Cart ----------
 let cartBackdrop = null;
 
 function ensureBackdrop() {
@@ -137,7 +134,7 @@ function ensureBackdrop() {
       background: 'rgba(0,0,0,0.5)',
       opacity: '0',
       transition: 'opacity .2s ease',
-      zIndex: '9',
+      zIndex: '9998',   // above header
       display: 'none',
     });
     document.body.appendChild(cartBackdrop);
@@ -148,8 +145,7 @@ function ensureBackdrop() {
 function showBackdrop() {
   ensureBackdrop();
   cartBackdrop.style.display = 'block';
-  // force reflow to animate
-  cartBackdrop.getBoundingClientRect();
+  cartBackdrop.getBoundingClientRect(); // force reflow
   cartBackdrop.style.opacity = '1';
 }
 
@@ -161,29 +157,21 @@ function hideBackdrop() {
   }, 200);
 }
 
-// REWRITE START — openCart / closeCart with history + esc + outside tap
 function openCart() {
   $('#cartPanel').classList.add('open');
   showBackdrop();
-  // add history state so back button closes the cart
-  try {
-    history.pushState({ cart: true }, '', '#cart');
-  } catch (e) {}
+  try { history.pushState({ cart: true }, '', '#cart'); } catch (e) {}
 }
 
 function closeCart(fromPop = false) {
   $('#cartPanel').classList.remove('open');
   hideBackdrop();
-  // if we pushed a state, go back once (avoid loops)
   if (!fromPop && location.hash === '#cart') {
-    try {
-      history.back();
-    } catch (e) {}
+    try { history.back(); } catch (e) {}
   }
 }
-// REWRITE END
 
-// ---------- App Init ----------
+// ---------- Init ----------
 async function init() {
   try {
     const res = await fetch('data/products.json', { cache: 'no-store' });
@@ -199,21 +187,19 @@ async function init() {
   ensureBackdrop();
 }
 
-// ---------- Global Listeners ----------
+// ---------- Listeners ----------
 document.addEventListener('click', (e) => {
-  // modal close controls
   if (e.target.id === 'closeModal' || e.target.id === 'productModal') closeModal();
-
-  // add to cart from modal
   if (e.target.id === 'addToCart') addSelectedToCart();
-
-  // cart open/close buttons
   if (e.target.id === 'openCart') openCart();
   if (e.target.id === 'closeCart') closeCart();
+});
 
-  // remove item buttons
-  if (e.target.matches('button[data-remove]')) {
-    const idx = parseInt(e.target.getAttribute('data-remove'), 10);
+$('#cartItems')?.addEventListener('click', (e) => {
+  const btn = e.target.closest('button[data-remove]');
+  if (!btn) return;
+  const idx = parseInt(btn.getAttribute('data-remove'), 10);
+  if (Number.isFinite(idx)) {
     state.cart.splice(idx, 1);
     saveCart();
   }
@@ -227,14 +213,12 @@ document.addEventListener('input', (e) => {
   }
 });
 
-// Checkout = open first item's checkout link (simple static-store strategy)
 $('#checkoutBtn')?.addEventListener('click', () => {
   if (state.cart.length === 0) return;
   const first = state.cart[0];
   window.open(first.checkout_url, '_blank');
 });
 
-// Contact form (mailto fallback; replace with Formspree/Netlify if needed)
 $('#contactForm')?.addEventListener('submit', (e) => {
   e.preventDefault();
   const name = $('#name').value.trim();
@@ -245,20 +229,17 @@ $('#contactForm')?.addEventListener('submit', (e) => {
   $('#contactNote').textContent = 'Opening your email app…';
 });
 
-// ESC closes cart
+// ESC closes modal or cart
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    // close modal first if open, else close cart
     if ($('#productModal')?.classList.contains('open')) closeModal();
     else closeCart();
   }
 });
 
-// Back button closes cart (if we pushed #cart)
+// Back button closes cart
 window.addEventListener('popstate', () => {
-  if (location.hash !== '#cart') {
-    closeCart(true);
-  }
+  if (location.hash !== '#cart') closeCart(true);
 });
 
 // Boot
