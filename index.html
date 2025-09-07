@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NXRE Official — Streetwear & Essentials</title>
+<meta name="description" content="A clean, fast storefront you can deploy in minutes.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<header>
+  <div class="container nav">
+    <a class="brand" href="#">
+      <img src="img/logo.svg" alt="NXRE Official logo" />
+      <strong>NXRE Official</strong>
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="#shop">Shop</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <button id="openCart" class="icon-btn badge" data-badge="0" aria-label="Open cart">🛒</button>
+  </div>
+</header>
+
+<main class="container">
+  <section class="hero" aria-label="Featured">
+    <div class="hero-card">
+      <img src="img/hero.jpg" alt="Featured collection">
+    </div>
+    <div class="hero-content hero-card">
+      <h1>Drop-ready. Fast. Minimal.</h1>
+      <p class="lead">A lightweight storefront template with a built-in cart. Plug in your Stripe/Shopify/Etsy links and you’re live.</p>
+      <div class="cta">
+        <a class="btn" href="#shop">Shop the collection</a>
+        <a class="btn ghost" href="#about">Learn more</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="shop" aria-labelledby="shop-title">
+    <h2 id="shop-title">Shop</h2>
+    <div id="productGrid" class="grid" role="list"></div>
+  </section>
+
+  <div class="hr"></div>
+
+  <section id="about">
+    <h2>About</h2>
+    <p class="lead">Write your brand story here. Who you are, what you stand for, and why your products are different.</p>
+  </section>
+
+  <div class="hr"></div>
+
+  <section id="contact">
+    <h2>Contact</h2>
+    <form id="contactForm">
+      <label for="name">Name</label>
+      <input id="name" name="name" required>
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" required>
+      <label for="msg">Message</label>
+      <textarea id="msg" name="msg" required></textarea>
+      <div class="cta"><button class="btn" type="submit">Send</button></div>
+      <p id="contactNote" class="lead" aria-live="polite"></p>
+    </form>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <p>&copy; <span id="year"></span> NXRE Official. All rights reserved.</p>
+  </div>
+</footer>
+
+<!-- Product Modal -->
+<div id="productModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card">
+    <img id="modalImg" alt="Product image">
+    <div class="content">
+      <h3 id="modalTitle"></h3>
+      <p id="modalDesc" class="lead"></p>
+      <p class="price" id="modalPrice"></p>
+      <div class="qty">
+        <label for="qtyInput">Qty</label>
+        <input id="qtyInput" type="number" min="1" value="1">
+      </div>
+      <div class="cta">
+        <button id="addToCart" class="btn">Add to cart</button>
+        <button id="closeModal" class="btn ghost">Close</button>
+      </div>
+      <p id="checkoutHint" class="lead" style="margin-top:10px;">Checkout is wired to external links (Stripe/Shopify/Etsy). Replace the product <code>checkout_url</code> in <code>data/products.json</code>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Cart Panel -->
+<aside id="cartPanel" class="cart-panel" aria-labelledby="cartTitle">
+  <div class="cart-header">
+    <strong id="cartTitle">Cart</strong>
+    <button id="closeCart" class="icon-btn">✕</button>
+  </div>
+  <div id="cartItems" class="cart-items" role="list"></div>
+  <div class="cart-footer">
+    <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+      <span>Subtotal</span><strong id="cartSubtotal">$0.00</strong>
+    </div>
+    <button id="checkoutBtn" class="btn" style="width:100%;">Checkout</button>
+    <p class="lead" style="margin-top:8px;">Each item routes to its checkout_url. You can point to Stripe Payment Links, Shopify product checkout, Etsy listings, or PayPal.</p>
+  </div>
+</aside>
+
+<script defer src="js/app.js"></script>
+</body>
+</html>
